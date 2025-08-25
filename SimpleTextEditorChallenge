@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+class Solution {
+    
+    static void Main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution */
+        
+        // keep track of all versions of the string, for undo operations
+        Stack<string> resultStack = new Stack<string>();
+        resultStack.Push("");
+        
+        // how many console lines are we iterating through?        
+        int numberOfOperations = Convert.ToInt32(Console.ReadLine().Trim());                
+        
+        // iterate through each line of commands / operations                
+        for (int i = 0; i < numberOfOperations; i++)
+        {            
+            string[] operationRow = Console.ReadLine().Split(' ');   // get the operation type, and value
+            
+            switch(operationRow[0]) // check operation type
+            {
+                case "1":    // append to string            
+                     resultStack.Push(string.Concat(resultStack.Peek(), operationRow[1])); // push the latest version of the string to the stack 
+                break;
+                
+                case "2": // delete indicated number of chars from end of string                    
+                    string currentString = resultStack.Peek();
+                    resultStack.Push(currentString.Remove(currentString.Length - int.Parse(operationRow[1])));
+                break;
+                
+                case "3": // print char at given index in string
+                    Console.WriteLine(resultStack.Peek()[int.Parse(operationRow[1]) - 1]);                    
+                break;
+                
+                case "4": // undo the last append / delete operation
+                    resultStack.Pop();                    
+                break;
+                
+            }
+        }            
+        
+    }
+}
