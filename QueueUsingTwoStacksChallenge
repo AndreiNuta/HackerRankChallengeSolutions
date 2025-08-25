@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Solution {
+    static void Main(String[] args)
+    {
+        int numberOfQueries = int.Parse(Console.ReadLine());
+        Stack<int> stack1 = new Stack<int>(); // we push to this stack
+        Stack<int> stack2 = new Stack<int>(); // we flip the values, and remove from this stack
+        bool  isStack1UpToDate = false; 
+        
+        for(int i = 0; i < numberOfQueries; i++)
+        {
+            string[] instructionRow = Console.ReadLine().Split(' ');
+            int operation = int.Parse(instructionRow[0]);
+            
+            if (operation == 1) // enqueue - add element to back of "front" stack
+            {
+               // Ensure that Stack 1 is up to date, and Push element in
+                if(!isStack1UpToDate || (stack1.Count() == 0 && stack2.Count() > 0) ) 
+                { // stacks are in use, and stack 1 is not up to date
+                    //Copy stack 2, backwards, into stack 1
+                    while (stack2.Count > 0)
+                        stack1.Push(stack2.Pop());                    
+                }
+                
+                stack1.Push(int.Parse(instructionRow[1]));   
+                isStack1UpToDate = true;     // after a push operation, Stack1 is always up to date           
+            } 
+            else if (operation == 2) // dequeue - remove element from front of "front" stack
+            {
+                // Remove element from "front" stack
+                if (isStack1UpToDate)
+                {
+                    // if stack 1 is up to date, stack 2 is not. Update it.
+                    while (stack1.Count > 0)
+                        stack2.Push(stack1.Pop());                                         
+                }
+                
+                stack2.Pop(); // remove the oldest element
+                isStack1UpToDate = false; // stack1 is ALWAYS outdated when a pop occurs
+            } 
+            else // peek - report what the front element of the "front" stack is
+            {
+                if (isStack1UpToDate)
+                {
+                    //Copy stack 1, backwards, into stack 2
+                    while (stack1.Count > 0)
+                        stack2.Push(stack1.Pop());                       
+                }
+                
+                Console.WriteLine(stack2.Peek()); 
+            }    
+            
+        } // for each operation        
+        
+    }
+}
