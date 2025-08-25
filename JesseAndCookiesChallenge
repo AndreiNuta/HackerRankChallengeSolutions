@@ -1,0 +1,91 @@
+// WIP; needs to run faster to pass all test cases
+
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Result
+{
+
+    /*
+     * Complete the 'cookies' function below.
+     *
+     * The function is expected to return an INTEGER.
+     * The function accepts following parameters:
+     *  1. INTEGER k
+     *  2. INTEGER_ARRAY A
+     */
+
+    public static int cookies(int minValue, List<int> cookieList)
+    {
+        bool isReady = false;
+        int cookieCounter = 0;
+        
+        //Console.WriteLine(string.Format("MinValue: {0}", minValue));
+        
+        while(!isReady)
+        {            
+            if (cookieList.Count > 1) //  && )
+            {      
+                cookieList.Sort(); // sort ascending, such that we can grab the 1st 2 elements to "mix"       
+            }
+            else if(cookieList[0] < minValue) // if it does not, return that it's not possible
+            {    
+                return -1;
+            }
+            else
+            {
+                return cookieCounter;
+            }
+            
+            isReady = cookieList[0] < minValue ? false : true; // check if the smallest element meets criteria; if it does, then the whole list does as well
+            
+            //Console.WriteLine(string.Format("CookieListCount: {0}", cookieList.Count));
+            //Console.WriteLine(string.Format("LeastSweetCookies: {0}, {1}", cookieList[0], cookieList[1]));
+            
+            if (!isReady)
+            {
+                cookieList.Add(cookieList[0] + (2 * cookieList[1])); // remix the cookie
+                cookieList.RemoveAt(0); // remove the 2 lowest elements we just used to make a new cookie
+                cookieList.RemoveAt(0); // element 1 just became element 0
+                cookieCounter = cookieCounter+1; // increment the cookie counter  
+            }
+        }// while cookies not ready
+        
+        return cookieCounter;
+        
+    } // cookies
+}
+
+class Solution
+{
+    public static void Main(string[] args)
+    {
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+
+        string[] firstMultipleInput = Console.ReadLine().TrimEnd().Split(' ');
+
+        int n = Convert.ToInt32(firstMultipleInput[0]);
+
+        int k = Convert.ToInt32(firstMultipleInput[1]);
+
+        List<int> A = Console.ReadLine().TrimEnd().Split(' ').ToList().Select(ATemp => Convert.ToInt32(ATemp)).ToList();
+
+        int result = Result.cookies(k, A);
+
+        textWriter.WriteLine(result);
+
+        textWriter.Flush();
+        textWriter.Close();
+    }
+}
