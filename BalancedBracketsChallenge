@@ -1,0 +1,121 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Result
+{
+
+    /*
+     * Complete the 'isBalanced' function below.
+     *
+     * The function is expected to return a STRING.
+     * The function accepts STRING s as parameter.
+     */
+
+    public static string isBalanced(string s)
+    {
+        char[] brackets = s.ToCharArray();
+        int count = brackets.Count();
+        bool isBalanced = true;
+        
+		//Console.WriteLine(string.Format("Count {0}", count)); 
+		
+        // These stacks will hold all the elements of the original string
+        Stack<char> openingBrackets = new Stack<char>();  // all opening bracket elements
+        //Stack<char> closingBrackets = new Stack<char>();  // all closing bracket elements
+        
+        // Comprehensive lists of opening, and closing brackets
+        List<char> listOfOpeningBrackets = new List<char>{'(','[','{'};
+        List<char> listOfClosingBrackets = new List<char>{')',']','}'};
+          
+        /*  Iterate through original string, and pick out the opening, 
+            and closing elements. Add each to respective lists.  */    
+        for(int i = 0; i < count; i++)
+        {
+            // add opening brackets to the stack
+            if(listOfOpeningBrackets.Any(x => x == brackets[i]))
+                openingBrackets.Push(brackets[i]);
+            else  // it's a closing bracket, check if it's a matched pair
+            {  
+                // check if there's opening brackets
+                if(openingBrackets.Count > 0)
+                {
+                    char currentOpeningBracketToMatch = openingBrackets.Peek();
+                    
+                    switch(brackets[i])
+                    {
+                        case ')':
+                            if(currentOpeningBracketToMatch != '(')
+                                isBalanced = false;
+                            else
+                                openingBrackets.Pop(); // if the pair is matched, remove the opening bracket from  the stack, and try to match next one
+                        break;
+                        
+                        case ']':
+                            if(currentOpeningBracketToMatch != '[')
+                                isBalanced = false;
+                            else
+                                openingBrackets.Pop(); // if the pair is matched, remove the opening bracket from  the stack, and try to match next one
+                        break;
+                        
+                        case '}':
+                            if(currentOpeningBracketToMatch != '{')
+                                isBalanced = false;
+                            else
+                                openingBrackets.Pop(); // if the pair is matched, remove the opening bracket from  the stack, and try to match next one
+                        break;
+                    }   // switch brackets[i]                 
+                } // if openingBrackets.Count > 0
+                else  
+                {
+                    return "NO"; //  a closing bracket with no opening bracket means the string is unbalanced
+                }
+                
+                //closingBrackets.Push(brackets[i]);
+            }
+            
+                              
+        } // for each char in brackets[]
+        
+        // If there's more of one type of bracket than another, the string isn't balanced
+        if(openingBrackets.Count != closingBrackets.Count)
+            return "NO";
+
+        
+
+        return isBalanced ? "YES" : "NO";    
+    }
+
+}
+
+class Solution
+{
+    public static void Main(string[] args)
+    {
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+
+        int t = Convert.ToInt32(Console.ReadLine().Trim());
+
+        for (int tItr = 0; tItr < t; tItr++)
+        {
+            string s = Console.ReadLine();
+
+            string result = Result.isBalanced(s);
+
+            textWriter.WriteLine(result);
+        }
+
+        textWriter.Flush();
+        textWriter.Close();
+    }
+}
